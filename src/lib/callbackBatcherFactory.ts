@@ -3,26 +3,46 @@ import LeakyBucketBatcher, {
 } from './strategies/leakyBucketBatcher';
 import { BatchedCallback, CallbackBatcher } from './types';
 
+/**
+ * This library exposes several strategies for managing the timing of scheduled
+ * callbacks corresponding to entries in this enum.
+ */
 export enum CallbackBatcherStrategies {
   TOKEN_BUCKET = 'TOKEN_BUCKET',
   // TODO
   WINDOWED_RATE_LIMITER = 'WINDOWED_RATE_LIMITER',
 }
 
+/**
+ * Config values to be passed when using the Leaky Bucket strategy
+ */
 type LeakyBucketConfig = {
   strategy: CallbackBatcherStrategies.TOKEN_BUCKET;
 } & LeakyBucketBatcherConfig;
 
+/**
+ * Config values to be passed when using the Windowed Rate Limiter strategy
+ */
 type WindowedRateLimitedConfig = {
   strategy: CallbackBatcherStrategies.WINDOWED_RATE_LIMITER;
 } & {
   // TODO
 };
 
+/**
+ * The main config argument passed to callbackBatcherFactory
+ */
 export type CallbackBatcherFactoryConfig =
   | LeakyBucketConfig
   | WindowedRateLimitedConfig;
 
+/**
+ * A factory function which allows configuring and creating callback batchers
+ * following a particular stategy for callback rate-limiting and batching.
+ *
+ * What config arguments are required depends on what value is passed for the
+ * `strategy` key in the config object.
+ */
 export function callbackBatcherFactory(
   config: CallbackBatcherFactoryConfig
 ): CallbackBatcher {

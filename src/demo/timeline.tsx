@@ -8,42 +8,21 @@ export const MS_PER_PIXEL = 10;
  */
 const BULLET_SIZE = 22;
 
-/**
- * Represents a single callback the requested of the scheuler
- */
 interface RequestedCallback {
   timestamp: number;
 }
 
-/**
- * An ordered list of callbacks requested of the scheduler
- */
 export type RequestedCallbackTimeline = RequestedCallback[];
 
-/**
- * Represents a single callback executed by the scheduler
- */
 type ExecutedCallback = RequestedCallback & {
   callCount: number;
 };
 
-/**
- * An ordered list of callbacks executed by the scheduler
- */
 export type ExecutedCallbackTimeline = ExecutedCallback[];
 
 interface TimelineProps {
-  /**
-   * The list ro render
-   */
   data: RequestedCallbackTimeline | ExecutedCallbackTimeline;
-  /**
-   * Label to show above timeline
-   */
   label: string;
-  /**
-   * How far to offset from center, which represents the current time
-   */
   offset: number;
 }
 

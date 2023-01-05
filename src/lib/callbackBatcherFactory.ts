@@ -1,6 +1,7 @@
 import LeakyBucketBatcher, {
   LeakyBucketBatcherConfig,
 } from './strategies/leakyBucketBatcher';
+import WindowedRateLimiterBatcher from './strategies/windowedRateLimiterBatcher';
 import { BatchedCallback, CallbackBatcher } from './types';
 
 /**
@@ -8,8 +9,7 @@ import { BatchedCallback, CallbackBatcher } from './types';
  * callbacks corresponding to entries in this enum.
  */
 export enum CallbackBatcherStrategies {
-  TOKEN_BUCKET = 'TOKEN_BUCKET',
-  // TODO
+  LEAKY_BUCKET = 'LEAKY_BUCKET',
   WINDOWED_RATE_LIMITER = 'WINDOWED_RATE_LIMITER',
 }
 
@@ -17,7 +17,7 @@ export enum CallbackBatcherStrategies {
  * Config values to be passed when using the Leaky Bucket strategy
  */
 type LeakyBucketConfig = {
-  strategy: CallbackBatcherStrategies.TOKEN_BUCKET;
+  strategy: CallbackBatcherStrategies.LEAKY_BUCKET;
 } & LeakyBucketBatcherConfig;
 
 /**
@@ -46,8 +46,9 @@ export type CallbackBatcherFactoryConfig =
 export function callbackBatcherFactory(
   config: CallbackBatcherFactoryConfig
 ): CallbackBatcher {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   switch (config.strategy) {
-    case CallbackBatcherStrategies.TOKEN_BUCKET: {
+    case CallbackBatcherStrategies.LEAKY_BUCKET: {
       const batcher = new LeakyBucketBatcher(config);
       const schedule = batcher.schedule;
       const disposer = batcher.destroy;
@@ -55,12 +56,10 @@ export function callbackBatcherFactory(
     }
     // TODO
     case CallbackBatcherStrategies.WINDOWED_RATE_LIMITER: {
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-        schedule: (hash: string, callback: BatchedCallback) => {},
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        disposer: () => {},
-      };
+      const batcher = new WindowedRateLimiterBatcher(config);
+      const schedule = batcher.schedule;
+      const disposer = batcher.destroy;
+      return { schedule, disposer };
     }
   }
 }

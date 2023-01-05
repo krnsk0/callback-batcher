@@ -12,7 +12,7 @@ import { CallbackBatcher } from '../lib/types';
  */
 export function useCallbackBatcher() {
   const config: CallbackBatcherFactoryConfig = {
-    strategy: CallbackBatcherStrategies.TOKEN_BUCKET,
+    strategy: CallbackBatcherStrategies.LEAKY_BUCKET,
     maxTokens: 5,
     tokenRate: 1000,
   };

@@ -5,10 +5,12 @@ describe('The WindowedRateLimiterBatcher class', () => {
   let originalNow: () => number;
   beforeEach(() => {
     originalNow = Date.now;
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
     Date.now = originalNow;
+    vi.useRealTimers();
   });
 
   test('should immediately invoke the callback when not in a rate-limited context', () => {
@@ -138,5 +140,47 @@ describe('The WindowedRateLimiterBatcher class', () => {
     expect(callbackOne).toHaveBeenCalledTimes(3);
     expect(callbackTwo).toHaveBeenCalledTimes(1);
     batcher.destroy();
+  });
+
+  test('should remove any maxed-out entries from the hashmap on each tick to save memory', () => {
+    const batcher = new WindowedRateLimiterBatcher({
+      windowSize: 1000,
+      callsPerWindow: 5,
+    });
+    const callback = vi.fn();
+
+    Date.now = () => 0;
+    // we hit the rate limit
+    for (let i = 0; i < 30; i += 1) {
+      batcher.schedule('example_hash', callback);
+    }
+    expect(callback).toHaveBeenCalledTimes(5);
+
+    // after a wait, there should be no entries
+    // as the entry for the callback will get cleared out
+    Date.now = () => 1000;
+    vi.advanceTimersByTime(1000);
+    // array access lets us inspect the private class property
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    expect(Object.entries(batcher['hashmap']).length).toBe(0);
+    expect(callback).toHaveBeenCalledTimes(6);
+    expect(callback).toHaveBeenLastCalledWith(25);
+
+    batcher.destroy();
+  });
+
+  test('should issue tailing calls when destroyed', () => {
+    const batcher = new WindowedRateLimiterBatcher({
+      windowSize: 1000,
+      callsPerWindow: 5,
+    });
+    const callback = vi.fn();
+    for (let i = 0; i < 30; i += 1) {
+      batcher.schedule('example_hash', callback);
+    }
+    expect(callback).toHaveBeenCalledTimes(5);
+    batcher.destroy();
+    expect(callback).toHaveBeenCalledTimes(6);
+    expect(callback).toHaveBeenLastCalledWith(25);
   });
 });

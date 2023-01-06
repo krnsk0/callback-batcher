@@ -60,6 +60,11 @@ class Entry {
       this.invocationRecord.push(Date.now());
     }
   }
+
+  tailingCallbackCall(): void {
+    this.callback(this.countSinceLastLog);
+    this.countSinceLastLog = 0;
+  }
 }
 
 /**
@@ -71,7 +76,8 @@ class Entry {
  * Batched calls are reported via the `count` parameter passed to the callback
  * when it is invoked in a non-rate-limited context.
  *
- * TODO: strategy for dealing with trailing calls
+ * Periodically clears out state to save memory (every `windowSize` ms), and
+ * sends any batched tailing calls when this takes place.
  */
 export default class WindowedRateLimiterBatcher
   implements CallbackBactcherStrategy
@@ -82,17 +88,43 @@ export default class WindowedRateLimiterBatcher
 
   private callsPerWindow: number;
 
+  private intervalId: number;
+
   constructor({
     windowSize,
     callsPerWindow,
   }: WindowedRateLimiterBatcherConfig) {
     this.windowSize = windowSize;
     this.callsPerWindow = callsPerWindow;
+    this.intervalId = setInterval(() => {
+      this.purgeEntriesAndMaybeInvoke();
+    }, windowSize) as unknown as number;
   }
 
   destroy = (): void => {
-    // TODO
+    clearInterval(this.intervalId);
+    this.purgeEntriesAndMaybeInvoke();
   };
+
+  private windowStart() {
+    return Date.now() - this.windowSize;
+  }
+
+  private purgeEntriesAndMaybeInvoke() {
+    Object.entries(this.hashmap).forEach(([hash, entry]) => {
+      entry.purgeOldCalls(this.windowStart());
+      if (entry.countSinceLastLog > 0) {
+        entry.tailingCallbackCall();
+      }
+
+      if (
+        entry.countSinceLastLog === 0 &&
+        entry.invocationRecord.length === 0
+      ) {
+        delete this.hashmap[hash];
+      }
+    });
+  }
 
   private findOrCreateEntry = (
     hash: string,
@@ -115,7 +147,7 @@ export default class WindowedRateLimiterBatcher
     const entry = this.findOrCreateEntry(hash, callback);
     entry.replaceCallback(callback);
     entry.incrementCallCount();
-    entry.purgeOldCalls(Date.now() - this.windowSize);
+    entry.purgeOldCalls(this.windowStart());
     entry.maybeInvokeCallback({
       callsPerWindow: this.callsPerWindow,
     });

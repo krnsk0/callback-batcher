@@ -17,9 +17,6 @@ export interface LeakyBucketBatcherConfig {
   tokenRate: number;
 }
 
-/**
- * Used internally by the token batcher strategy
- */
 interface EntryInitialParams {
   tokens: number;
   callback: BatchedCallback;

@@ -4,23 +4,120 @@ import CallbackBactcherStrategy from './callbackBatcherStrategy';
 /**
  * Configuration for the windowed rate limiter batcher strategy
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface WindowedRateLimiterBatcherConfig {
-  // TODO
+  /**
+   * How large is the window, in milliseconds?
+   */
+  windowSize: number;
+  /**
+   * How many calls are allowed per window?
+   */
+  callsPerWindow: number;
+}
+
+interface EntryInitialParams {
+  callback: BatchedCallback;
 }
 
 /**
- * TODO
+ * A helper class that encapsultates state for a rate-limited callback.
+ */
+class Entry {
+  countSinceLastLog = 0;
+
+  callback: BatchedCallback;
+
+  invocationRecord: number[] = [];
+
+  constructor({ callback }: EntryInitialParams) {
+    this.callback = callback;
+  }
+
+  replaceCallback(callback: BatchedCallback) {
+    this.callback = callback;
+  }
+
+  incrementCallCount(): void {
+    this.countSinceLastLog += 1;
+  }
+
+  purgeOldCalls(windowStart: number): void {
+    while (
+      this.invocationRecord.length &&
+      this.invocationRecord[0] <= windowStart
+    ) {
+      this.invocationRecord.shift();
+    }
+  }
+
+  maybeInvokeCallback({ callsPerWindow }: { callsPerWindow: number }): void {
+    if (
+      this.countSinceLastLog > 0 &&
+      this.invocationRecord.length < callsPerWindow
+    ) {
+      this.callback(this.countSinceLastLog);
+      this.countSinceLastLog = 0;
+      this.invocationRecord.push(Date.now());
+    }
+  }
+}
+
+/**
+ * This batcher strategy keeps track of the time when invocations are requested
+ * for a window extending into the past by `windowSize`. If the callback is
+ * invoked more than `callsPerWindow` during this backwards-looking unit of time,
+ * then calls are blocked.
+ *
+ * Batched calls are reported via the `count` parameter passed to the callback
+ * when it is invoked in a non-rate-limited context.
+ *
+ * TODO: strategy for dealing with trailing calls
  */
 export default class WindowedRateLimiterBatcher
   implements CallbackBactcherStrategy
 {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-  constructor(config: WindowedRateLimiterBatcherConfig) {}
+  private hashmap: Record<string, Entry> = {};
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  destroy = (): void => {};
+  private windowSize: number;
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-  schedule = (hash: string, callback: BatchedCallback): void => {};
+  private callsPerWindow: number;
+
+  constructor({
+    windowSize,
+    callsPerWindow,
+  }: WindowedRateLimiterBatcherConfig) {
+    this.windowSize = windowSize;
+    this.callsPerWindow = callsPerWindow;
+  }
+
+  destroy = (): void => {
+    // TODO
+  };
+
+  private findOrCreateEntry = (
+    hash: string,
+    callback: BatchedCallback
+  ): Entry => {
+    const entry =
+      this.hashmap[hash] ??
+      new Entry({
+        callback,
+      });
+    this.hashmap[hash] = entry;
+    // Returning the entry ensures we don't need to repeatedly look up the entry
+    // in the hash in order to mutate it in other methods, as lookup can be
+    // worse than constant time in the edge case where there are very many
+    // distinct hash entries.
+    return entry;
+  };
+
+  schedule = (hash: string, callback: BatchedCallback): void => {
+    const entry = this.findOrCreateEntry(hash, callback);
+    entry.replaceCallback(callback);
+    entry.incrementCallCount();
+    entry.purgeOldCalls(Date.now() - this.windowSize);
+    entry.maybeInvokeCallback({
+      callsPerWindow: this.callsPerWindow,
+    });
+  };
 }

@@ -41,6 +41,7 @@ describe('The leakyBucketBatcher class', () => {
       batcher.schedule('one', callbackOne);
     }
     batcher.schedule('two', callbackTwo);
+    expect(callbackOne).toHaveBeenCalledTimes(3);
     expect(callbackTwo).toHaveBeenCalledTimes(1);
     batcher.destroy();
   });

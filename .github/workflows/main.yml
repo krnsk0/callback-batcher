@@ -12,35 +12,21 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Use Node
+      - name: Use Node
         uses: actions/setup-node@v3
         with:
           node-version: v18.12.1
-      -
-        name: Gen test page
-        run: |
-          mkdir public
-          cat > public/index.html <<EOL
-          <!doctype html>
-          <html>
-            <head>
-              <title>GitHub Pages deployed!</title>
-            </head>
-            <body>
-              hello world
-            </body>
-          </html>
-          EOL
-      -
-        name: Deploy to GitHub Pages
+      - name: Install
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build:demo
+      - name: Deploy
         if: success()
         uses: crazy-max/ghaction-github-pages@v3
         with:
           target_branch: gh-pages
-          build_dir: public
+          build_dir: dist-demo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

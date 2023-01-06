@@ -12,6 +12,9 @@ import { CallbackBatcher, ScheduleFn } from './types';
  */
 const DEFAULT_HASH = 'DEFAULT_HASH' as const;
 
+/**
+ * If the user does not pass a strategy, we fall back on Leaky Bucket
+ */
 type DefaultConfig = { strategy?: undefined } & LeakyBucketBatcherConfig;
 
 /**

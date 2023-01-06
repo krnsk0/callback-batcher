@@ -1,7 +1,7 @@
 {
   "name": "callback-batcher",
   "version": "1.0.0",
-  "description": "Vite TypeScript library npm package template",
+  "description": "Isomorphic callback rate-limiter and batcher",
   "license": "MIT",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",

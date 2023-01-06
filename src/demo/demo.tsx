@@ -8,7 +8,6 @@ import {
   Timeline,
 } from './timeline';
 import { useAnimationFrame } from './useAnimationFrame';
-import { CallbackBatcherStrategies } from '../lib';
 
 /**
  * Simple demo of callback batcher. Re-renders on every animation frame;
@@ -16,12 +15,12 @@ import { CallbackBatcherStrategies } from '../lib';
  */
 export function Demo() {
   const leakyBucketBatcher = useCallbackBatcher({
-    strategy: CallbackBatcherStrategies.LEAKY_BUCKET,
+    strategy: 'LEAKY_BUCKET',
     maxTokens: 5,
     tokenRate: 1000,
   });
   const windowedBatcher = useCallbackBatcher({
-    strategy: CallbackBatcherStrategies.WINDOWED_RATE_LIMITER,
+    strategy: 'WINDOWED_RATE_LIMITER',
     windowSize: 1000,
     callsPerWindow: 2,
   });

@@ -34,7 +34,7 @@ type WindowedRateLimiterConfig = {
 /**
  * The main config argument passed to callbackBatcherFactory
  */
-export type CallbackBatcherFactoryConfig =
+export type makeCallbackBatcherConfig =
   | DefaultConfig
   | LeakyBucketConfig
   | WindowedRateLimiterConfig;
@@ -46,8 +46,8 @@ export type CallbackBatcherFactoryConfig =
  * What config arguments are required depends on what value is passed for the
  * `strategy` key in the config object.
  */
-export function callbackBatcherFactory(
-  config: CallbackBatcherFactoryConfig
+export function makeCallbackBatcher(
+  config: makeCallbackBatcherConfig
 ): CallbackBatcher {
   let batcher: CallbackBactcherStrategy;
   switch (config.strategy) {

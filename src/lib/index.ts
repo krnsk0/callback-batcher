@@ -1,15 +1,15 @@
 import {
-  callbackBatcherFactory,
-  CallbackBatcherFactoryConfig,
+  makeCallbackBatcher,
+  makeCallbackBatcherConfig,
   CallbackBatcherStrategies,
-} from './callbackBatcherFactory';
+} from './makeCallbackBatcher';
 import { CallbackBatcher, ScheduleFn, Disposer } from './types';
 
 export type {
   CallbackBatcher,
   ScheduleFn,
   Disposer,
-  CallbackBatcherFactoryConfig,
+  makeCallbackBatcherConfig as CallbackBatcherFactoryConfig,
 };
 
-export { callbackBatcherFactory, CallbackBatcherStrategies };
+export { makeCallbackBatcher as callbackBatcherFactory, CallbackBatcherStrategies };

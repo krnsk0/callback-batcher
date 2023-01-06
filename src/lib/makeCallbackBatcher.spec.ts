@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import { callbackBatcherFactory } from './callbackBatcherFactory';
+import { makeCallbackBatcher } from './makeCallbackBatcher';
 import LeakyBucketBatcher from './strategies/leakyBucketBatcher';
 import WindowedRateLimiterBatcher from './strategies/windowedRateLimiterBatcher';
 
@@ -15,9 +15,9 @@ vi.mock('./strategies/windowedRateLimiterBatcher', () => {
   };
 });
 
-describe('The callbackBatcherFactory', () => {
-  test('shoul default to leaky bucket when no strategy is passed', () => {
-    callbackBatcherFactory({
+describe('The makeCallbackBatcher factory fn', () => {
+  test('should default to leaky bucket when no strategy is passed', () => {
+    makeCallbackBatcher({
       maxTokens: 5,
       tokenRate: 1000,
     });
@@ -31,7 +31,7 @@ describe('The callbackBatcherFactory', () => {
   });
 
   test('should instantiate with the token bucket strategy', () => {
-    callbackBatcherFactory({
+    makeCallbackBatcher({
       strategy: 'LEAKY_BUCKET',
       maxTokens: 5,
       tokenRate: 1000,
@@ -46,7 +46,7 @@ describe('The callbackBatcherFactory', () => {
   });
 
   test('should instantiate with the windowed rate limiter strategy', () => {
-    callbackBatcherFactory({
+    makeCallbackBatcher({
       strategy: 'WINDOWED_RATE_LIMITER',
       windowSize: 1000,
       callsPerWindow: 3,
@@ -60,8 +60,8 @@ describe('The callbackBatcherFactory', () => {
   test('should rate-limit with a default hash', async () => {
     vi.doUnmock('./strategies/leakyBucketBatcher');
     vi.resetModules();
-    const { callbackBatcherFactory } = await import('./callbackBatcherFactory');
-    const batcher = callbackBatcherFactory({ maxTokens: 3, tokenRate: 1000 });
+    const { makeCallbackBatcher } = await import('./makeCallbackBatcher');
+    const batcher = makeCallbackBatcher({ maxTokens: 3, tokenRate: 1000 });
     const callback = vi.fn();
     for (let i = 0; i < 30; i += 1) {
       batcher.schedule(callback);
@@ -73,8 +73,8 @@ describe('The callbackBatcherFactory', () => {
   test('should rate-limit with a hash explicitly passed in a separate token count for each distinct hash value', async () => {
     vi.doUnmock('./strategies/leakyBucketBatcher');
     vi.resetModules();
-    const { callbackBatcherFactory } = await import('./callbackBatcherFactory');
-    const batcher = callbackBatcherFactory({ maxTokens: 3, tokenRate: 1000 });
+    const { makeCallbackBatcher } = await import('./makeCallbackBatcher');
+    const batcher = makeCallbackBatcher({ maxTokens: 3, tokenRate: 1000 });
     const callbackOne = vi.fn();
     const callbackTwo = vi.fn();
     for (let i = 0; i < 30; i += 1) {

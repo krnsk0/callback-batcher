@@ -5,11 +5,14 @@
 export type BatchedCallback = (count: number) => void;
 
 /**
- * Describes the function used to request invocation of a callback. Callbacks
- * are paired with a hash which uniquely identifies them. This allows keeing
- * separate state for many callbacks.
+ * Describes the function used to request invocation of a callback.
+ *
+ * Callbacks may be paired with an "identifier hash" hash.
+ *
+ * This allows keeing separate timing/batching state for multiple callbacks
+ * using a single batcher instance.
  */
-export type ScheduleFn = (hash: string, callback: BatchedCallback) => void;
+export type ScheduleFn = (callback: BatchedCallback, hash?: string) => void;
 
 /**
  * The return type of callback batcher factories

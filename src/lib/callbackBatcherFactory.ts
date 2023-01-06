@@ -1,10 +1,16 @@
+import CallbackBactcherStrategy from './strategies/callbackBatcherStrategy';
 import LeakyBucketBatcher, {
   LeakyBucketBatcherConfig,
 } from './strategies/leakyBucketBatcher';
 import WindowedRateLimiterBatcher, {
   WindowedRateLimiterBatcherConfig,
 } from './strategies/windowedRateLimiterBatcher';
-import { CallbackBatcher } from './types';
+import { CallbackBatcher, ScheduleFn } from './types';
+
+/**
+ * Used as the hash when the user declines to pass one in
+ */
+const DEFAULT_HASH = 'DEFAULT_HASH' as const;
 
 /**
  * This library exposes several strategies for managing the timing of scheduled
@@ -49,19 +55,31 @@ export type CallbackBatcherFactoryConfig =
 export function callbackBatcherFactory(
   config: CallbackBatcherFactoryConfig
 ): CallbackBatcher {
+  let batcher: CallbackBactcherStrategy;
   switch (config.strategy) {
     case undefined: // default to Leaky Bucket
     case CallbackBatcherStrategies.LEAKY_BUCKET: {
-      const batcher = new LeakyBucketBatcher(config);
-      const schedule = batcher.schedule;
-      const disposer = batcher.destroy;
-      return { schedule, disposer };
+      batcher = new LeakyBucketBatcher(config);
+      break;
     }
     case CallbackBatcherStrategies.WINDOWED_RATE_LIMITER: {
-      const batcher = new WindowedRateLimiterBatcher(config);
-      const schedule = batcher.schedule;
-      const disposer = batcher.destroy;
-      return { schedule, disposer };
+      batcher = new WindowedRateLimiterBatcher(config);
+      break;
     }
   }
+
+  /**
+   * Defaults the hash when undefined
+   */
+  const schedule: ScheduleFn = (callback, hash) => {
+    if (hash) {
+      batcher.schedule(hash, callback);
+    } else {
+      batcher.schedule(DEFAULT_HASH, callback);
+    }
+  };
+
+  const disposer = batcher.destroy;
+
+  return { schedule, disposer };
 }

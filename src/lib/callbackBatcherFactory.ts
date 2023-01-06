@@ -15,6 +15,8 @@ export enum CallbackBatcherStrategies {
   WINDOWED_RATE_LIMITER = 'WINDOWED_RATE_LIMITER',
 }
 
+type DefaultConfig = { strategy?: undefined } & LeakyBucketBatcherConfig;
+
 /**
  * Config values to be passed when using the Leaky Bucket strategy
  */
@@ -33,6 +35,7 @@ type WindowedRateLimiterConfig = {
  * The main config argument passed to callbackBatcherFactory
  */
 export type CallbackBatcherFactoryConfig =
+  | DefaultConfig
   | LeakyBucketConfig
   | WindowedRateLimiterConfig;
 
@@ -46,8 +49,8 @@ export type CallbackBatcherFactoryConfig =
 export function callbackBatcherFactory(
   config: CallbackBatcherFactoryConfig
 ): CallbackBatcher {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   switch (config.strategy) {
+    case undefined:
     case CallbackBatcherStrategies.LEAKY_BUCKET: {
       const batcher = new LeakyBucketBatcher(config);
       const schedule = batcher.schedule;

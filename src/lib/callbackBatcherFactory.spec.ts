@@ -19,6 +19,20 @@ vi.mock('./strategies/windowedRateLimiterBatcher', async () => {
 });
 
 describe('The callbackBatcherFactory', () => {
+  test('shoul default to leaky bucket when no strategy is passed', () => {
+    callbackBatcherFactory({
+      maxTokens: 5,
+      tokenRate: 1000,
+    });
+
+    expect(LeakyBucketBatcher).toHaveBeenCalledWith(
+      expect.objectContaining({
+        maxTokens: 5,
+        tokenRate: 1000,
+      })
+    );
+  });
+
   test('should instantiate with the token bucket strategy', () => {
     callbackBatcherFactory({
       strategy: CallbackBatcherStrategies.LEAKY_BUCKET,

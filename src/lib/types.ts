@@ -5,6 +5,12 @@
 export type BatchedCallback = (count: number) => void;
 
 /**
+ * This disposer funciton cleans up any effects of batcher initialization,
+ * e.g. a `setInterval`
+ */
+export type Disposer = () => void;
+
+/**
  * Describes the function used to request invocation of a callback.
  *
  * Callbacks may be paired with an "identifier hash" hash.
@@ -19,5 +25,5 @@ export type ScheduleFn = (callback: BatchedCallback, hash?: string) => void;
  */
 export interface CallbackBatcher {
   schedule: ScheduleFn;
-  disposer: () => void;
+  disposer: Disposer;
 }

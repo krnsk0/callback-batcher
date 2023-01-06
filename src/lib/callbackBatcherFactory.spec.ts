@@ -1,8 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import {
-  callbackBatcherFactory,
-  CallbackBatcherStrategies,
-} from './callbackBatcherFactory';
+import { callbackBatcherFactory } from './callbackBatcherFactory';
 import LeakyBucketBatcher from './strategies/leakyBucketBatcher';
 import WindowedRateLimiterBatcher from './strategies/windowedRateLimiterBatcher';
 
@@ -35,7 +32,7 @@ describe('The callbackBatcherFactory', () => {
 
   test('should instantiate with the token bucket strategy', () => {
     callbackBatcherFactory({
-      strategy: CallbackBatcherStrategies.LEAKY_BUCKET,
+      strategy: 'LEAKY_BUCKET',
       maxTokens: 5,
       tokenRate: 1000,
     });
@@ -50,7 +47,7 @@ describe('The callbackBatcherFactory', () => {
 
   test('should instantiate with the windowed rate limiter strategy', () => {
     callbackBatcherFactory({
-      strategy: CallbackBatcherStrategies.WINDOWED_RATE_LIMITER,
+      strategy: 'WINDOWED_RATE_LIMITER',
       windowSize: 1000,
       callsPerWindow: 3,
     });

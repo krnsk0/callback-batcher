@@ -12,29 +12,20 @@ import { CallbackBatcher, ScheduleFn } from './types';
  */
 const DEFAULT_HASH = 'DEFAULT_HASH' as const;
 
-/**
- * This library exposes several strategies for managing the timing of scheduled
- * callbacks corresponding to entries in this enum.
- */
-export enum CallbackBatcherStrategies {
-  LEAKY_BUCKET = 'LEAKY_BUCKET',
-  WINDOWED_RATE_LIMITER = 'WINDOWED_RATE_LIMITER',
-}
-
 type DefaultConfig = { strategy?: undefined } & LeakyBucketBatcherConfig;
 
 /**
  * Config values to be passed when using the Leaky Bucket strategy
  */
 type LeakyBucketConfig = {
-  strategy: CallbackBatcherStrategies.LEAKY_BUCKET;
+  strategy: 'LEAKY_BUCKET';
 } & LeakyBucketBatcherConfig;
 
 /**
  * Config values to be passed when using the Windowed Rate Limiter strategy
  */
 type WindowedRateLimiterConfig = {
-  strategy: CallbackBatcherStrategies.WINDOWED_RATE_LIMITER;
+  strategy: 'WINDOWED_RATE_LIMITER';
 } & WindowedRateLimiterBatcherConfig;
 
 /**
@@ -58,11 +49,11 @@ export function callbackBatcherFactory(
   let batcher: CallbackBactcherStrategy;
   switch (config.strategy) {
     case undefined: // default to Leaky Bucket
-    case CallbackBatcherStrategies.LEAKY_BUCKET: {
+    case 'LEAKY_BUCKET': {
       batcher = new LeakyBucketBatcher(config);
       break;
     }
-    case CallbackBatcherStrategies.WINDOWED_RATE_LIMITER: {
+    case 'WINDOWED_RATE_LIMITER': {
       batcher = new WindowedRateLimiterBatcher(config);
       break;
     }

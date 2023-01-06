@@ -32,7 +32,7 @@ type WindowedRateLimiterConfig = {
 } & WindowedRateLimiterBatcherConfig;
 
 /**
- * The main config argument passed to callbackBatcherFactory
+ * The main config argument passed to makeCallbackBatcher
  */
 export type makeCallbackBatcherConfig =
   | DefaultConfig

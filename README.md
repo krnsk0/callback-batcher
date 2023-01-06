@@ -24,11 +24,113 @@ This package has no runtime dependencies.
 
 ## Basic Usage
 
+The `makeCallbackBatcher` function, given a configuration, returns a batcher
+object:
 
+```ts
+const batcher = makeCallbackBatcher({
+  maxTokens: 3,
+  tokenRate: 1000
+});
+```
+
+This object exposes two functions. The first, `schedule`, is used to request
+invocation of a callback, subject to a rate limit:
+```ts
+const batcher = makeCallbackBatcher({
+  maxTokens: 3,
+  tokenRate: 1000
+});
+batcher.schedule(() => console.log('invoked!'))
+> 'invoked!'
+```
+
+If we schedule callback invocations more quickly than the rate limit allows,
+some calls will be throttled, invoked only after some time. When invoked, the
+callbacks will be passed a `count` telling us how many calls were throttled
+in between the last sucessful scheduled invocation and the current one:
+```ts
+const batcher = makeCallbackBatcher({
+  maxTokens: 3,
+  tokenRate: 1000
+});
+
+for (let i = 0; i < 6; i += 1) {
+  batcher.schedule((c) => console.log('invoked! count: ${c}'))
+}
+> 'invoked! count: 1'
+> 'invoked! count: 1'
+> 'invoked! count: 1'
+then after 1000ms...
+> 'invoked! count: 3'
+```
+
+The second function on the batcher object, `disposer`, cleans up the timers
+used internally by the batcher, immediately making any trailing, batched
+invocations:
+
+```ts
+const batcher = makeCallbackBatcher({
+  maxTokens: 3,
+  tokenRate: 1000
+});
+
+for (let i = 0; i < 6; i += 1) {
+  batcher.schedule((c) => console.log('invoked! count: ${c}'))
+}
+batcher.dispose()
+> 'invoked! count: 1'
+> 'invoked! count: 1'
+> 'invoked! count: 1'
+> 'invoked! count: 3'
+```
 
 ## Keeping State Per-Callback State
+The scheduler function on the batcher also accepts a second optional string
+argument. Called a "callback identifier hash", this value is meant to uniquely
+identify a callback to the batcher. This allows the batcher to separately
+track state for different callbacks.
 
 ## Strategies
+
+The `makeCallbackBatcher` factory function can optionally be passed a `strategy`
+argument that specifies which algorithm to use for rate limiting. The various
+algorithms have their own configuration parameters.
+
+The *Leaky Bucket* strategy assignes each callback a token bucket to which
+tokens are added at `tokenRate` (in milliseconds), with an initial and maximum
+value of `maxTokens`. Under callback invocation pressure, this strategy allows
+initial bursts of size `maxTokens`, with a trickle of batched calls following
+determined by `tokenRate`.
+
+```ts
+const batcher = makeCallbackBatcher({
+  strategy: "LEAKY_BUCKET",
+  maxTokens: 3,
+  tokenRate: 1000
+});
+```
+
+The *Windowed Rate Limiter* strategy keeps track of when invocations were
+previously requested for each callback identifier hash over a window of length
+`windowSize` (in milliseconds). If invoked more than `callsPerWindow` during
+this backwards-looking window, the callback is throttled. Batch invoations
+take place when calls slow down, or every `windowSize` milliseconds (to ensure
+that tailing calls are captured when there are no more invocations).
+
+```ts
+const batcher = makeCallbackBatcher({
+  strategy: "WINDOWED_RATE_LIMITER",
+  windowSize: 1000,
+  callsPerWindow: 2,
+});
+```
+
+When not passed a `strategy` argument, `makeCallbackBatcher` by default selects
+the Leaky Bucket strategy.
+
+[This in-browser demo](https://callback-batcher.vercel.app/) vizualizes the
+varying timing charactaristics of the strategies.
 
 ## Caveats
 The rate-limiting strategies employed by this library make use of `setInterval`
@@ -37,10 +139,20 @@ hidden pages](https://developer.chrome.com/blog/timer-throttling-in-chrome-88/).
 This means that the rate of callback invocation may drop substantially below
 the configured rate.
 
-Batching will work correctly, however. If a Leaky Bucket batcher configured to
-refill buckets every second is throttled by the browser to instead add
-tokens only every ten seconds, the `count` value passed to the callback will
-ensure that no calls were missed
+However, if a Leaky Bucket batcher configured to refill buckets every second is
+throttled by the browser to instead add tokens only every ten seconds, the
+`count` value passed to the callback will be correct, ensuring that while the
+rate of callback invocation may slow, invocations can be tracked.
+
+In a browser context, it may make sense to invoke the `disposer` cleanup
+function on the batcher in a `beforeunload` event. In addition to cleaning up
+`setInterval`s used internally, disposers make any tailing batched calls,
+ensuring that throttled callbacks are not "missed".
 
 
 ## Development
+To make change to this library, clone it, run `yarn install`, and then
+`yarn run start`. This will launch the in-browser demo, which is useful for
+verifying that changes have their intended effects.
+
+Unit tests (written using `vitest`) can be run via `yarn test`.

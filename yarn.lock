@@ -838,6 +838,11 @@ convert-source-map@^1.7.0:
   resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.9.0.tgz#7faae62353fb4213366d0ca98358d22e8368b05f"
   integrity sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==
 
+coverage-badge-creator@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/coverage-badge-creator/-/coverage-badge-creator-1.0.15.tgz#19f84aa64f18aa5b1ac210d597cf235db77faa9a"
+  integrity sha512-J6D3ZXJt2JfhBX8klkFGg+NbE9zYkfRsesWOB2+Pt7udCr7g1KBrSkG1P9WyZfiBrEb2pILmLgw9fXVlIHiIog==
+
 create-require@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/create-require/-/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"

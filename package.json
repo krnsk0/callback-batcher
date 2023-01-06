@@ -17,7 +17,8 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier . --write",
     "test": "vitest --config vite.config.lib.ts",
-    "coverage": "vitest --config vite.config.lib.ts --coverage"
+    "coverage": "vitest run --config vite.config.lib.ts --coverage",
+    "coverage:badge": "yarn coverage && coverage-badge-creator"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
@@ -27,6 +28,7 @@
     "@typescript-eslint/parser": "^5.46.0",
     "@vitejs/plugin-react": "^3.0.0",
     "@vitest/coverage-istanbul": "^0.26.3",
+    "coverage-badge-creator": "^1.0.15",
     "dts-bundle-generator": "^7.1.0",
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",

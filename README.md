@@ -1,4 +1,7 @@
 # Isomorphic Callback Batcher
+![](https://img.shields.io/badge/Coverage-100%25-83A603.svg?prefix=$coverage$)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ## Introduction
 This library provides a simple tool for in-memory rate-limiting of function
 invocation in both the browser and in node. Key features:

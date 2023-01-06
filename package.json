@@ -1,8 +1,8 @@
 {
-  "name": "vite-typescript-npm-package",
+  "name": "callback-batcher",
   "version": "1.0.0",
   "description": "Vite TypeScript library npm package template",
-  "license": "ISC",
+  "license": "MIT",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
@@ -12,10 +12,10 @@
   "scripts": {
     "start": "vite --config vite.config.demo.ts --host --open",
     "build:demo": "vite --config vite.config.demo.ts build",
-    "build:lib": "tsc && vite --config vite.config.lib.ts build && dts-bundle-generator --config ./dts-bundle-generator.config.ts",
+    "build": "tsc && vite --config vite.config.lib.ts build && dts-bundle-generator --config ./dts-bundle-generator.config.ts && yarn format",
     "watch": "tsc && vite --config vite.config.lib.ts build --watch",
-    "lint:scripts": "eslint . --ext .ts",
-    "format:scripts": "prettier . --write",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier . --write",
     "test": "vitest --config vite.config.lib.ts",
     "coverage": "vitest --config vite.config.lib.ts --coverage"
   },

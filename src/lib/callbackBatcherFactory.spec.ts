@@ -37,10 +37,12 @@ describe('The callbackBatcherFactory', () => {
   test('should instantiate with the windowed rate limiter strategy', () => {
     callbackBatcherFactory({
       strategy: CallbackBatcherStrategies.WINDOWED_RATE_LIMITER,
+      windowSize: 1000,
+      callsPerWindow: 3,
     });
 
     expect(WindowedRateLimiterBatcher).toHaveBeenCalledWith(
-      expect.objectContaining({})
+      expect.objectContaining({ windowSize: 1000, callsPerWindow: 3 })
     );
   });
 });

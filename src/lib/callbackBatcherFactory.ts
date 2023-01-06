@@ -50,14 +50,13 @@ export function callbackBatcherFactory(
   config: CallbackBatcherFactoryConfig
 ): CallbackBatcher {
   switch (config.strategy) {
-    case undefined:
+    case undefined: // default to Leaky Bucket
     case CallbackBatcherStrategies.LEAKY_BUCKET: {
       const batcher = new LeakyBucketBatcher(config);
       const schedule = batcher.schedule;
       const disposer = batcher.destroy;
       return { schedule, disposer };
     }
-    // TODO
     case CallbackBatcherStrategies.WINDOWED_RATE_LIMITER: {
       const batcher = new WindowedRateLimiterBatcher(config);
       const schedule = batcher.schedule;

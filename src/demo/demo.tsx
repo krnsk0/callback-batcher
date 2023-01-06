@@ -51,22 +51,22 @@ export function Demo() {
   });
 
   function scheduleCallback() {
-    leakyBucketBatcher.schedule('default', (callCount) => {
+    leakyBucketBatcher.schedule((callCount) => {
       setExecutedOne([
         ...stateRef.current.executedOne.filter(
           (data) => data.timestamp >= stateRef.current.removeTime
         ),
         { timestamp: Date.now() - startTime, callCount },
       ]);
-    });
-    windowedBatcher.schedule('default', (callCount) => {
+    }, 'default');
+    windowedBatcher.schedule((callCount) => {
       setExecutedTwo([
         ...stateRef.current.executedTwo.filter(
           (data) => data.timestamp >= stateRef.current.removeTime
         ),
         { timestamp: Date.now() - startTime, callCount },
       ]);
-    });
+    }, 'default');
     setRequested([
       ...stateRef.current.requested.filter(
         (data) => data.timestamp >= stateRef.current.removeTime

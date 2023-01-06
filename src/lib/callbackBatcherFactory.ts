@@ -1,8 +1,10 @@
 import LeakyBucketBatcher, {
   LeakyBucketBatcherConfig,
 } from './strategies/leakyBucketBatcher';
-import WindowedRateLimiterBatcher from './strategies/windowedRateLimiterBatcher';
-import { BatchedCallback, CallbackBatcher } from './types';
+import WindowedRateLimiterBatcher, {
+  WindowedRateLimiterBatcherConfig,
+} from './strategies/windowedRateLimiterBatcher';
+import { CallbackBatcher } from './types';
 
 /**
  * This library exposes several strategies for managing the timing of scheduled
@@ -23,18 +25,16 @@ type LeakyBucketConfig = {
 /**
  * Config values to be passed when using the Windowed Rate Limiter strategy
  */
-type WindowedRateLimitedConfig = {
+type WindowedRateLimiterConfig = {
   strategy: CallbackBatcherStrategies.WINDOWED_RATE_LIMITER;
-} & {
-  // TODO
-};
+} & WindowedRateLimiterBatcherConfig;
 
 /**
  * The main config argument passed to callbackBatcherFactory
  */
 export type CallbackBatcherFactoryConfig =
   | LeakyBucketConfig
-  | WindowedRateLimitedConfig;
+  | WindowedRateLimiterConfig;
 
 /**
  * A factory function which allows configuring and creating callback batchers

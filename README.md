@@ -1,4 +1,4 @@
-# Isomorphic Callback Batcher
+# Callback Batcher
 ![](https://img.shields.io/badge/Coverage-100%25-83A603.svg?prefix=$coverage$)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

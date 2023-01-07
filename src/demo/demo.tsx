@@ -29,7 +29,7 @@ function Demo() {
   });
 
   const scheduleCallback = () => {
-    store.strategyDemo.requestCallback([leakyBucketBatcher, windowedBatcher]);
+    store.strategyDemo.requestCallback({ leakyBucketBatcher, windowedBatcher });
   };
 
   return (
@@ -62,13 +62,13 @@ function Demo() {
           showCallCount={false}
         />
         <Timeline
-          data={[]}
+          data={store.strategyDemo.leakyBucketCallbacks}
           label={'Leaky Bucket - Executed Callbacks w/ Call Count'}
           color="white"
           showCallCount={true}
         />
         <Timeline
-          data={[]}
+          data={store.strategyDemo.windowedCallbacks}
           label={'Windowed Rate Limiter - Executed Callbacks w/ Call Count'}
           color="white"
           showCallCount={true}

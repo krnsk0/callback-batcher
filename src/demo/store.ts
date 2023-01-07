@@ -35,7 +35,8 @@ export class Point extends Model({
 @model('StrategyDemo')
 export class StrategyDemo extends Model({
   requestedCallbacks: tProp(types.array(Point), () => []),
-  executedCallbacks: tProp(types.array(types.array(Point)), () => []),
+  leakyBucketCallbacks: tProp(types.array(Point), () => []),
+  windowedCallbacks: tProp(types.array(Point), () => []),
 }) {
   @modelAction
   removeOldPointsFromList(points: Point[]) {
@@ -51,19 +52,37 @@ export class StrategyDemo extends Model({
   tick(): void {
     this.removeOldPointsFromList(this.requestedCallbacks);
     // console.log(getSnapshot(this));
-    this.executedCallbacks.forEach((list) => {
-      this.removeOldPointsFromList(list);
-    });
   }
 
   @modelAction
-  requestCallback(batchers: CallbackBatcher[]): void {
+  addLeakyBucketCallback(callCount: number): void {
+    this.leakyBucketCallbacks.push(
+      new Point({ timestamp: Date.now(), callCount })
+    );
+  }
+
+  @modelAction
+  addWindowedCallback(callCount: number): void {
+    this.windowedCallbacks.push(
+      new Point({ timestamp: Date.now(), callCount })
+    );
+  }
+
+  @modelAction
+  requestCallback({
+    leakyBucketBatcher,
+    windowedBatcher,
+  }: {
+    leakyBucketBatcher: CallbackBatcher;
+    windowedBatcher: CallbackBatcher;
+  }): void {
     const timestamp = Date.now();
     this.requestedCallbacks.push(new Point({ timestamp }));
-    batchers.forEach((batcher, batcherIndex) => {
-      batcher.schedule(() => {
-        // this.executedCallbacks
-      });
+    leakyBucketBatcher.schedule((callCount) => {
+      this.addLeakyBucketCallback(callCount);
+    });
+    windowedBatcher.schedule((callCount) => {
+      this.addWindowedCallback(callCount);
     });
   }
 }

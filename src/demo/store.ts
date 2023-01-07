@@ -51,7 +51,8 @@ export class StrategyDemo extends Model({
   @modelAction
   tick(): void {
     this.removeOldPointsFromList(this.requestedCallbacks);
-    // console.log(getSnapshot(this));
+    this.removeOldPointsFromList(this.leakyBucketCallbacks);
+    this.removeOldPointsFromList(this.windowedCallbacks);
   }
 
   @modelAction

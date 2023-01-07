@@ -12,16 +12,12 @@ interface RequestedCallback {
   timestamp: number;
 }
 
-export type RequestedCallbackTimeline = RequestedCallback[];
-
 type ExecutedCallback = RequestedCallback & {
   callCount: number;
 };
 
-export type ExecutedCallbackTimeline = ExecutedCallback[];
-
 interface TimelineProps {
-  data: RequestedCallbackTimeline | ExecutedCallbackTimeline;
+  data: RequestedCallback[] | ExecutedCallback[];
   label: string;
   offset: number;
 }

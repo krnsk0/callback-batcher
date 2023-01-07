@@ -1,13 +1,22 @@
 import { useCallbackBatcher } from './useCallbackBatcher';
 import { BatcherInvoker } from './batcherInvoker';
-import { Timeline } from './timeline';
+import Timeline from './timeline';
 import { useAnimationFrame } from './useAnimationFrame';
+import { observer } from 'mobx-react-lite';
+import { useStore } from './storeProvider';
 
 /**
  * Simple demo of callback batcher. Re-renders on every animation frame;
  * discards data that will be rendered offscreen
  */
-export function Demo() {
+function Demo() {
+  const store = useStore();
+
+  useAnimationFrame(() => {
+    store.tick();
+    store.strategyDemo.tick();
+  });
+
   const leakyBucketBatcher = useCallbackBatcher({
     strategy: 'LEAKY_BUCKET',
     maxTokens: 5,
@@ -19,18 +28,14 @@ export function Demo() {
     callsPerWindow: 2,
   });
 
-  useAnimationFrame(() => {
-    // TODO
-  });
+  const scheduleCallback = () => {
+    store.strategyDemo.requestCallback([leakyBucketBatcher, windowedBatcher]);
+  };
 
   return (
     <div style={{ width: '97vw' }}>
       <h1>callback batcher / rate-limiter demo</h1>
-      <BatcherInvoker
-        scheduleCallback={() => {
-          // TODO
-        }}
-      />
+      <BatcherInvoker scheduleCallback={scheduleCallback} />
       <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', left: '50vw', height: '100%' }}>
           <div
@@ -50,18 +55,27 @@ export function Demo() {
             }}
           />
         </div>
-        <Timeline data={[]} label={'requested callbacks'} offset={0} />
+        <Timeline
+          data={store.strategyDemo.requestedCallbacks}
+          label={'requested callbacks'}
+          color="black"
+          showCallCount={false}
+        />
         <Timeline
           data={[]}
           label={'Leaky Bucket - Executed Callbacks w/ Call Count'}
-          offset={0}
+          color="white"
+          showCallCount={true}
         />
         <Timeline
           data={[]}
           label={'Windowed Rate Limiter - Executed Callbacks w/ Call Count'}
-          offset={0}
+          color="white"
+          showCallCount={true}
         />
       </div>
     </div>
   );
 }
+
+export default observer(Demo);

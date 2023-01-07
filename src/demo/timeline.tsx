@@ -1,33 +1,32 @@
-/**
- * How "zoomed in" is the timeline?
- */
-export const MS_PER_PIXEL = 10;
+import { observer } from 'mobx-react-lite';
+import { useRef } from 'react';
+import { Point } from './store';
 
 /**
  * How large are circles on the timeline?
  */
 const BULLET_SIZE = 22;
 
-interface RequestedCallback {
-  timestamp: number;
-}
-
-type ExecutedCallback = RequestedCallback & {
-  callCount: number;
-};
-
 interface TimelineProps {
-  data: RequestedCallback[] | ExecutedCallback[];
+  data: Point[];
   label: string;
-  offset: number;
+  color: string;
+  showCallCount: boolean;
 }
 
 /**
  * Helper component which displays an ordered list of calls
  */
-export function Timeline({ data, label, offset }: TimelineProps) {
+function Timeline({ data, label, color, showCallCount }: TimelineProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const halfway = containerRef.current
+    ? containerRef.current.getBoundingClientRect().width / 2
+    : 0;
+
   return (
     <div
+      ref={containerRef}
       style={{
         marginTop: '50px',
         height: `${BULLET_SIZE * 1.5}px`,
@@ -44,23 +43,23 @@ export function Timeline({ data, label, offset }: TimelineProps) {
             style={{
               height: `${BULLET_SIZE}px`,
               width: `${BULLET_SIZE}px`,
-              backgroundColor: !('callCount' in point) ? 'black' : 'white',
+              backgroundColor: color,
               border: '1px solid black',
               borderRadius: '50%',
               position: 'absolute',
-              left: `${
-                point.timestamp / MS_PER_PIXEL + offset - BULLET_SIZE / 2
-              }px`,
+              left: `${halfway - point.getPxOffset}px`,
               top: `${BULLET_SIZE / 6}px`,
               display: 'flex',
               justifyContent: 'center',
               fontFamily: 'sans-serif',
             }}
           >
-            {'callCount' in point ? point.callCount : null}
+            {showCallCount ? point.callCount : null}
           </span>
         );
       })}
     </div>
   );
 }
+
+export default observer(Timeline);

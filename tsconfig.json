@@ -21,7 +21,8 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitReturns": false,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
   },
   "include": ["src", "src/demo/demo.tsx", "src/demo/main.tsx"],
   "exclude": ["node_modules"],

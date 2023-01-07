@@ -12,9 +12,9 @@ invocation in both the browser and in node. Key features:
   previously throttled calls, which is useful for situations in which the
   developer needs to track occurrences of a certain event without impacting
   each occurence creating load on a scarce resource
-  - Callback functions passed to the batcher utility can be assigned a unique
-  hash, allowing a single batcher instance to separately rate-limit many
-  distinct kinds or categories of event
+  - Callback functions passed to the batcher utility can be assigned an
+  identifier string, allowing a single batcher instance to separately rate-limit
+  many distinct kinds or categories of event
 
 This tool is ideal for situations where--for example--a client application
 issues repeating log, error, or analytics events which must all be tracked, but

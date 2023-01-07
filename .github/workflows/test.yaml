@@ -21,4 +21,8 @@ jobs:
     - name: lint
       run: yarn list
     - name: test
-      run: yarn test
+      run: yarn coverage
+    - name: coverage report
+      uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          lcov-file: ./coverage/lcov.info

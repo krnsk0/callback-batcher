@@ -15,7 +15,7 @@ invocation in both the browser and in node. Key features:
   hash, allowing a single batcher instance to separately rate-limit many
   distinct kinds or categories of event
 
-This tool is ideal for situations where (for example) a client application
+This tool is ideal for situations where--for example--a client application
 issues repeating log, error, or analytics events which must all be tracked, but
 where there is also a need to minimize load on a logging or tracking service.
 

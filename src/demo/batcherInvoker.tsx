@@ -64,7 +64,9 @@ export function BatcherInvoker({ scheduleCallback }: BatcherInvokerProps) {
       <div
         style={{ marginTop: '10px', display: 'flex', alignContent: 'center' }}
       >
-        <span style={{ marginRight: '10px' }}>invocation rate (ms):</span>
+        <span style={{ marginRight: '10px' }}>
+          invocation rate: {invocationRate}ms
+        </span>
         <select name="rate" onChange={handleRateChange} value={invocationRate}>
           {INVOCATION_RATES.map((rate) => {
             return (

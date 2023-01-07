@@ -17,6 +17,8 @@ export default defineConfig({
     coverage: {
       provider: 'istanbul',
       reporter: ['text', 'json-summary', 'html'],
+      all: true,
+      include: ['src/lib/**/*'],
       lines: 100,
       functions: 100,
       branches: 100,

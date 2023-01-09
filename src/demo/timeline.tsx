@@ -20,8 +20,9 @@ interface TimelineProps {
 function Timeline({ data, label, color, showCallCount }: TimelineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const halfway = containerRef.current
-    ? containerRef.current.getBoundingClientRect().width / 2
+  const startPoint = containerRef.current
+    ? containerRef.current.getBoundingClientRect().width -
+      containerRef.current.getBoundingClientRect().width / 3
     : 0;
 
   return (
@@ -47,7 +48,7 @@ function Timeline({ data, label, color, showCallCount }: TimelineProps) {
               border: '1px solid black',
               borderRadius: '50%',
               position: 'absolute',
-              left: `${halfway - point.getPxOffset}px`,
+              left: `${startPoint - point.getPxOffset}px`,
               top: `${BULLET_SIZE / 6}px`,
               display: 'flex',
               justifyContent: 'center',

@@ -18,7 +18,7 @@ const MS_PER_PIXEL = 10;
 /**
  * Clean up points older than this window
  */
-const KEEP_POINT_DURATION = 10000;
+const KEEP_POINT_DURATION = 20000;
 
 @model('Point')
 export class Point extends Model({

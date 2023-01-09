@@ -32,7 +32,7 @@ function Demo() {
 
   return (
     <div style={{ width: '97vw' }}>
-      <h1>Callback-batcher Demo</h1>
+      <h1>callback-batcher demo</h1>
 
       <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', left: '50vw', height: '100%' }}>
@@ -62,15 +62,15 @@ function Demo() {
         <BatcherInvoker scheduleCallback={scheduleCallback} />
         <Timeline
           data={store.strategyDemo.leakyBucketCallbacks}
-          label={'Leaky Bucket - Executed Callbacks w/ Call Count'}
-          color="white"
+          label={'Leaky Bucket'}
+          color="lightblue"
           showCallCount={true}
         />
         <LeakyController batcherRef={leakyBucketBatcherRef} />
         <Timeline
           data={store.strategyDemo.windowedCallbacks}
-          label={'Windowed Rate Limiter - Executed Callbacks w/ Call Count'}
-          color="white"
+          label={'Windowed Rate Limiter'}
+          color="orange"
           showCallCount={true}
         />
         <WindowedController batcherRef={windowedBatcherRef} />

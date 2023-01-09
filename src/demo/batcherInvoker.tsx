@@ -1,16 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-const INVOCATION_RATES = [
-  100,
-  250,
-  500,
-  750,
-  1000,
-  1500,
-  2000,
-  'stop',
-] as const;
-
 interface BatcherInvokerProps {
   scheduleCallback: () => void;
 }
@@ -21,8 +10,7 @@ interface BatcherInvokerProps {
  */
 export function BatcherInvoker({ scheduleCallback }: BatcherInvokerProps) {
   // rate of scheduler invocation
-  const [invocationRate, setInvocationRate] =
-    useState<typeof INVOCATION_RATES[number]>(250);
+  const [invocationRate, setInvocationRate] = useState<number>(250);
 
   // allows clearing interval
   const intervalRef = useRef<number>(0);
@@ -33,7 +21,7 @@ export function BatcherInvoker({ scheduleCallback }: BatcherInvokerProps) {
    */
   useEffect(() => {
     clearInterval(intervalRef.current);
-    if (typeof invocationRate === 'number') {
+    if (typeof invocationRate === 'number' && invocationRate > 0) {
       intervalRef.current = setInterval(() => {
         scheduleCallback();
       }, invocationRate) as unknown as number;
@@ -44,11 +32,16 @@ export function BatcherInvoker({ scheduleCallback }: BatcherInvokerProps) {
   /**
    * Allows changing the rate of the invoker
    */
-  function handleRateChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const newRate = (
-      e.target.value === 'stop' ? e.target.value : parseInt(e.target.value)
-    ) as typeof INVOCATION_RATES[number];
-    setInvocationRate(newRate);
+  function handleRateChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const rate = parseInt(e.target.value);
+    if (rate === 0) {
+      stopInvoker();
+    } else setInvocationRate(rate);
+  }
+
+  function stopInvoker() {
+    setInvocationRate(0);
+    clearInterval(intervalRef.current);
   }
 
   return (
@@ -59,31 +52,29 @@ export function BatcherInvoker({ scheduleCallback }: BatcherInvokerProps) {
       }}
     >
       <div>
-        <strong>invoke the callback bacher</strong>
+        <strong>Callback Scheduler</strong>
       </div>
-      <div
-        style={{ marginTop: '10px', display: 'flex', alignContent: 'center' }}
-      >
-        <span style={{ marginRight: '10px' }}>
-          invocation rate: {invocationRate}ms
-        </span>
-        <select name="rate" onChange={handleRateChange} value={invocationRate}>
-          {INVOCATION_RATES.map((rate) => {
-            return (
-              <option key={rate} value={rate}>
-                {rate}
-              </option>
-            );
-          })}
-        </select>
-      </div>
-      <button
-        type="button"
-        onClick={scheduleCallback}
-        style={{ marginTop: '10px' }}
-      >
-        manually schedule
+      <div>Schedule rate: </div>
+      <input
+        type="range"
+        min="0"
+        max="1500"
+        value={invocationRate}
+        onChange={handleRateChange}
+      />
+      <button onClick={stopInvoker} style={{ fontSize: '0.8em' }}>
+        stop
       </button>
+      <span style={{ marginLeft: '10px' }}>{invocationRate}ms</span>
+      <div>
+        <button
+          type="button"
+          onClick={scheduleCallback}
+          style={{ marginTop: '10px' }}
+        >
+          Manually Schedule
+        </button>
+      </div>
     </div>
   );
 }

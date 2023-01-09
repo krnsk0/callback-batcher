@@ -76,17 +76,19 @@ export class StrategyDemo extends Model({
     leakyBucketBatcher,
     windowedBatcher,
   }: {
-    leakyBucketBatcher: CallbackBatcher;
-    windowedBatcher: CallbackBatcher;
+    leakyBucketBatcher: CallbackBatcher | undefined;
+    windowedBatcher: CallbackBatcher | undefined;
   }): void {
     const timestamp = Date.now();
     this.requestedCallbacks.push(new Point({ timestamp }));
-    leakyBucketBatcher.schedule((callCount) => {
-      this.addLeakyBucketCallback(callCount);
-    });
-    windowedBatcher.schedule((callCount) => {
-      this.addWindowedCallback(callCount);
-    });
+    leakyBucketBatcher &&
+      leakyBucketBatcher.schedule((callCount) => {
+        this.addLeakyBucketCallback(callCount);
+      });
+    windowedBatcher &&
+      windowedBatcher.schedule((callCount) => {
+        this.addWindowedCallback(callCount);
+      });
   }
 }
 

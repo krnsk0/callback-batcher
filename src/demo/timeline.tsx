@@ -39,7 +39,7 @@ function Timeline({ data, label, color, showCallCount }: TimelineProps) {
       {data.map((point) => {
         return (
           <span
-            key={point.timestamp}
+            key={point.id}
             style={{
               height: `${BULLET_SIZE}px`,
               width: `${BULLET_SIZE}px`,

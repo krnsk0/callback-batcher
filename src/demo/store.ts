@@ -8,6 +8,7 @@ import {
 } from 'mobx-keystone';
 import { computed } from 'mobx';
 import { CallbackBatcher } from '../lib';
+import { nanoid } from 'nanoid';
 
 /**
  * How "zoomed in" is the timeline?
@@ -21,6 +22,7 @@ const KEEP_POINT_DURATION = 10000;
 
 @model('Point')
 export class Point extends Model({
+  id: tProp(types.string, () => nanoid()),
   timestamp: tProp(types.number, () => 0),
   callCount: tProp(types.number, () => 0),
 }) {

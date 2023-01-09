@@ -45,30 +45,47 @@ function LeakyController({ batcherRef }: LeakyControllerProps) {
     <div
       style={{
         padding: '10px',
+        display: 'flex',
+        flexDirection: 'row',
       }}
     >
-      <div>Max Tokens:</div>
       <div>
-        <input
-          type="range"
-          min="1"
-          max="20"
-          value={maxTokens}
-          onChange={handleMaxTokenChange}
-        />
-        <span>{maxTokens} tokens</span>
+        <div>Max Tokens:</div>
+        <div>
+          <input
+            type="range"
+            min="1"
+            max="20"
+            value={maxTokens}
+            onChange={handleMaxTokenChange}
+          />
+          <span>{maxTokens} tokens</span>
+        </div>
+        <div>Token rate:</div>
+        <div>
+          <input
+            type="range"
+            min="100"
+            max="4000"
+            value={tokenRate}
+            onChange={handleRateChange}
+          />
+          <span>{tokenRate}ms</span>
+        </div>
       </div>
-      <div>Token rate:</div>
-      <div>
-        <input
-          type="range"
-          min="100"
-          max="4000"
-          value={tokenRate}
-          onChange={handleRateChange}
-        />
-        <span>{tokenRate}ms</span>
-      </div>
+      <pre
+        style={{
+          marginLeft: '50px',
+          padding: '5px',
+          backgroundColor: 'lightgrey',
+          width: '340px',
+        }}
+      >
+        const batcher = makeCallbackBatcher(&#123;
+        {'\n\t'}strategy: "LEAKY_BUCKET",
+        {'\n\t'}maxTokens: {maxTokens},{'\n\t'}tokenRate: {tokenRate},{'\n'}
+        &#125;);
+      </pre>
     </div>
   );
 }

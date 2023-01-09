@@ -49,30 +49,47 @@ function WindowedController({ batcherRef }: WindowedControllerProps) {
     <div
       style={{
         padding: '10px',
+        display: 'flex',
+        flexDirection: 'row',
       }}
     >
-      <div>Window Size:</div>
       <div>
-        <input
-          type="range"
-          min="100"
-          max="2000"
-          value={windowSize}
-          onChange={handleWindowSizeChange}
-        />
-        <span>{windowSize} ms</span>
+        <div>Window Size:</div>
+        <div>
+          <input
+            type="range"
+            min="100"
+            max="2000"
+            value={windowSize}
+            onChange={handleWindowSizeChange}
+          />
+          <span>{windowSize} ms</span>
+        </div>
+        <div>Calls per window:</div>
+        <div>
+          <input
+            type="range"
+            min="1"
+            max="20"
+            value={callsPerWindow}
+            onChange={handleCallsPerWindowChange}
+          />
+          <span>{callsPerWindow} calls</span>
+        </div>
       </div>
-      <div>Calls per window:</div>
-      <div>
-        <input
-          type="range"
-          min="1"
-          max="20"
-          value={callsPerWindow}
-          onChange={handleCallsPerWindowChange}
-        />
-        <span>{callsPerWindow} calls</span>
-      </div>
+      <pre
+        style={{
+          marginLeft: '50px',
+          padding: '5px',
+          backgroundColor: 'lightgrey',
+          width: '340px',
+        }}
+      >
+        const batcher = makeCallbackBatcher(&#123;
+        {'\n\t'}strategy: "WINDOWED_RATE_LIMITER",
+        {'\n\t'}windowSize: {windowSize},{'\n\t'}callsPerWindow:{' '}
+        {callsPerWindow},{'\n'}&#125;);
+      </pre>
     </div>
   );
 }

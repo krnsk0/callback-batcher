@@ -1,4 +1,3 @@
-import { useCallbackBatcher } from './useCallbackBatcher';
 import { BatcherInvoker } from './batcherInvoker';
 import Timeline from './timeline';
 import { useAnimationFrame } from './useAnimationFrame';
@@ -7,6 +6,7 @@ import { useStore } from './storeProvider';
 import LeakyController from './leakyController';
 import { useRef } from 'react';
 import { CallbackBatcher } from '../lib';
+import WindowedController from './windowedController';
 
 /**
  * Simple demo of callback batcher. Re-renders on every animation frame;
@@ -21,17 +21,12 @@ function Demo() {
   });
 
   const leakyBucketBatcherRef = useRef<CallbackBatcher>();
-
-  const windowedBatcher = useCallbackBatcher({
-    strategy: 'WINDOWED_RATE_LIMITER',
-    windowSize: 1000,
-    callsPerWindow: 2,
-  });
+  const windowedBatcherRef = useRef<CallbackBatcher>();
 
   const scheduleCallback = () => {
     store.strategyDemo.requestCallback({
       leakyBucketBatcher: leakyBucketBatcherRef.current,
-      windowedBatcher,
+      windowedBatcher: windowedBatcherRef.current,
     });
   };
 
@@ -78,6 +73,7 @@ function Demo() {
           color="white"
           showCallCount={true}
         />
+        <WindowedController batcherRef={windowedBatcherRef} />
       </div>
     </div>
   );

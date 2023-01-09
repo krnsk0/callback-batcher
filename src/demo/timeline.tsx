@@ -34,7 +34,7 @@ function Timeline({ data, label, color, showCallCount }: TimelineProps) {
         border: '1px solid black',
       }}
     >
-      <div style={{ top: '-25px', position: 'relative' }}>{label}</div>
+      <strong style={{ top: '-25px', position: 'relative' }}>{label}</strong>
 
       {data.map((point) => {
         return (

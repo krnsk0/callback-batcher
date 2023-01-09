@@ -47,13 +47,9 @@ export function BatcherInvoker({ scheduleCallback }: BatcherInvokerProps) {
   return (
     <div
       style={{
-        border: '1px solid black',
         padding: '10px',
       }}
     >
-      <div>
-        <strong>Callback Scheduler</strong>
-      </div>
       <div>Schedule rate: </div>
       <input
         type="range"

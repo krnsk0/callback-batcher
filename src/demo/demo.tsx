@@ -38,7 +38,7 @@ function Demo() {
   return (
     <div style={{ width: '97vw' }}>
       <h1>Callback-batcher Demo</h1>
-      <BatcherInvoker scheduleCallback={scheduleCallback} />
+
       <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', left: '50vw', height: '100%' }}>
           <div
@@ -64,7 +64,7 @@ function Demo() {
           color="black"
           showCallCount={false}
         />
-
+        <BatcherInvoker scheduleCallback={scheduleCallback} />
         <Timeline
           data={store.strategyDemo.leakyBucketCallbacks}
           label={'Leaky Bucket - Executed Callbacks w/ Call Count'}

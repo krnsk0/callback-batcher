@@ -36,7 +36,11 @@ function LeakyController({ batcherRef }: LeakyControllerProps) {
   }
 
   return (
-    <>
+    <div
+      style={{
+        padding: '10px',
+      }}
+    >
       <div>Max Tokens:</div>
       <div>
         <input
@@ -59,7 +63,7 @@ function LeakyController({ batcherRef }: LeakyControllerProps) {
         />
         <span>{tokenRate}ms</span>
       </div>
-    </>
+    </div>
   );
 }
 

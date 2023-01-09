@@ -5,34 +5,40 @@ interface LeakyControllerProps {
   batcherRef: React.MutableRefObject<CallbackBatcher | undefined>;
 }
 
+function recreateBatcher({
+  batcherRef,
+  maxTokens,
+  tokenRate,
+}: {
+  batcherRef: React.MutableRefObject<CallbackBatcher | undefined>;
+  maxTokens: number;
+  tokenRate: number;
+}) {
+  batcherRef.current = makeCallbackBatcher({
+    strategy: 'LEAKY_BUCKET',
+    maxTokens,
+    tokenRate,
+  });
+}
+
 function LeakyController({ batcherRef }: LeakyControllerProps) {
   const [maxTokens, setMaxTokens] = useState<number>(3);
   const [tokenRate, setTokenRate] = useState<number>(1000);
 
   function handleMaxTokenChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setMaxTokens(parseInt(e.target.value));
-    batcherRef.current = makeCallbackBatcher({
-      strategy: 'LEAKY_BUCKET',
-      maxTokens,
-      tokenRate,
-    });
+    const val = parseInt(e.target.value);
+    setMaxTokens(val);
+    recreateBatcher({ batcherRef, maxTokens: val, tokenRate });
   }
 
   function handleRateChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setTokenRate(parseInt(e.target.value));
-    batcherRef.current = makeCallbackBatcher({
-      strategy: 'LEAKY_BUCKET',
-      maxTokens,
-      tokenRate,
-    });
+    const val = parseInt(e.target.value);
+    setTokenRate(val);
+    recreateBatcher({ batcherRef, maxTokens, tokenRate: val });
   }
 
   if (!batcherRef.current) {
-    batcherRef.current = makeCallbackBatcher({
-      strategy: 'LEAKY_BUCKET',
-      maxTokens,
-      tokenRate,
-    });
+    recreateBatcher({ batcherRef, maxTokens, tokenRate });
   }
 
   return (

@@ -95,6 +95,27 @@ argument. Called a "callback identifier hash", this value is meant to uniquely
 identify a callback to the batcher. This allows the batcher to separately
 track state for different callbacks.
 
+```ts
+const batcher = makeCallbackBatcher({
+  maxTokens: 3,
+  tokenRate: 1000
+});
+
+// max out `callback-a`
+for (let i = 0; i < 3; i += 1) {
+  batcher.schedule((count) => console.log(`A ${count}`), 'callback-a')
+}
+
+// callback b will still be invoked as soon as it is scheduled
+batcher.schedule((count) => console.log(`B ${count}`), 'callback-b')
+
+> 'A 1'
+> 'A 1'
+> 'A 1'
+> 'B 1'
+
+```
+
 ## Strategies
 
 The `makeCallbackBatcher` factory function can optionally be passed a `strategy`

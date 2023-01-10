@@ -89,7 +89,7 @@ batcher.dispose()
 > 'invoked! count: 3'
 ```
 
-## Keeping State Per-Callback State
+## Keeping State Per-Callback
 The scheduler function on the batcher also accepts a second optional string
 argument. Called a "callback identifier hash", this value is meant to uniquely
 identify a callback to the batcher. This allows the batcher to separately

@@ -3,6 +3,9 @@
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 > [Browser Demo](https://callback-batcher.vercel.app) 👀
+
+Built at @Tubitv
+
 ## Introduction
 This library provides a simple tool for in-memory rate-limiting of function
 invocation in both the browser and in node. Key features:

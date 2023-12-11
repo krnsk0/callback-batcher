@@ -30,7 +30,7 @@ where there is also a need to minimize load on a logging or tracking service.
 ## Installation
 
 ```
-TODO: add installation instructions when published to NPM
+npm i callback-batcher
 ```
 
 This package has no runtime dependencies.

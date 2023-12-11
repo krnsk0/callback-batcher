@@ -12,7 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "useDefineForClassFields": true,
     "strict": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "sourceMap": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -22,7 +22,7 @@
     "noUnusedParameters": false,
     "noImplicitReturns": false,
     "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true,
+    "experimentalDecorators": true
   },
   "include": ["src", "src/demo/demo.tsx", "src/demo/main.tsx"],
   "exclude": ["node_modules"],

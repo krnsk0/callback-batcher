@@ -1,21 +1,25 @@
 # Callback Batcher
+
 ![](https://img.shields.io/badge/Coverage-100%25-83A603.svg?prefix=$coverage$)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 > [Browser Demo](https://callback-batcher.vercel.app) 👀
 
 Built at @Tubitv
 
 ## Introduction
+
 This library provides a simple tool for in-memory rate-limiting of function
 invocation in both the browser and in node. Key features:
-  - The developer can choose between rate-limiting algorithms with different
+
+- The developer can choose between rate-limiting algorithms with different
   "burstiness" characteristics
-  - The next call after a series of throttled calls is passed a count of
+- The next call after a series of throttled calls is passed a count of
   previously throttled calls, which is useful for situations in which the
   developer needs to track occurrences of a certain event without impacting
   each occurence creating load on a scarce resource
-  - Callback functions passed to the batcher utility can be assigned an
+- Callback functions passed to the batcher utility can be assigned an
   identifier string, allowing a single batcher instance to separately rate-limit
   many distinct kinds or categories of event
 
@@ -24,9 +28,11 @@ issues repeating log, error, or analytics events which must all be tracked, but
 where there is also a need to minimize load on a logging or tracking service.
 
 ## Installation
+
 ```
 TODO: add installation instructions when published to NPM
 ```
+
 This package has no runtime dependencies.
 
 ## Basic Usage
@@ -37,25 +43,26 @@ object:
 ```ts
 const batcher = makeCallbackBatcher({
   maxTokens: 3,
-  tokenRate: 1000
+  tokenRate: 1000,
 });
 ```
 
 This object exposes two functions. The first, `schedule`, is used to request
 invocation of a callback, subject to a rate limit:
+
 ```ts
 const batcher = makeCallbackBatcher({
   maxTokens: 3,
-  tokenRate: 1000
+  tokenRate: 1000,
 });
-batcher.schedule(() => console.log('invoked!'))
-> 'invoked!'
+batcher.schedule(() => console.log('invoked!')) > 'invoked!';
 ```
 
 If we schedule callback invocations more quickly than the rate limit allows,
 some calls will be throttled, invoked only after some time. When invoked, the
 callbacks will be passed a `count` telling us how many calls were throttled
 in between the last sucessful scheduled invocation and the current one:
+
 ```ts
 const batcher = makeCallbackBatcher({
   maxTokens: 3,
@@ -79,20 +86,21 @@ invocations:
 ```ts
 const batcher = makeCallbackBatcher({
   maxTokens: 3,
-  tokenRate: 1000
+  tokenRate: 1000,
 });
 
 for (let i = 0; i < 6; i += 1) {
-  batcher.schedule((c) => console.log('invoked! count: ${c}'))
+  batcher.schedule((c) => console.log('invoked! count: ${c}'));
 }
-batcher.dispose()
-> 'invoked! count: 1'
-> 'invoked! count: 1'
-> 'invoked! count: 1'
-> 'invoked! count: 3'
+batcher.dispose() >
+  'invoked! count: 1' >
+  'invoked! count: 1' >
+  'invoked! count: 1' >
+  'invoked! count: 3';
 ```
 
 ## Keeping State Per-Callback
+
 The scheduler function on the batcher also accepts a second optional string
 argument. Called a "callback identifier hash", this value is meant to uniquely
 identify a callback to the batcher. This allows the batcher to separately
@@ -101,22 +109,20 @@ track state for different callbacks.
 ```ts
 const batcher = makeCallbackBatcher({
   maxTokens: 3,
-  tokenRate: 1000
+  tokenRate: 1000,
 });
 
 // max out `callback-a`
 for (let i = 0; i < 3; i += 1) {
-  batcher.schedule((count) => console.log(`A ${count}`), 'callback-a')
+  batcher.schedule((count) => console.log(`A ${count}`), 'callback-a');
 }
 
 // callback b will still be invoked as soon as it is scheduled
-batcher.schedule((count) => console.log(`B ${count}`), 'callback-b')
-
-> 'A 1'
-> 'A 1'
-> 'A 1'
-> 'B 1'
-
+batcher.schedule((count) => console.log(`B ${count}`), 'callback-b') >
+  'A 1' >
+  'A 1' >
+  'A 1' >
+  'B 1';
 ```
 
 ## Strategies
@@ -125,7 +131,7 @@ The `makeCallbackBatcher` factory function can optionally be passed a `strategy`
 argument that specifies which algorithm to use for rate limiting. The various
 algorithms have their own configuration parameters.
 
-The *Leaky Bucket* strategy assignes each callback a token bucket to which
+The _Leaky Bucket_ strategy assignes each callback a token bucket to which
 tokens are added at `tokenRate` (in milliseconds), with an initial and maximum
 value of `maxTokens`. Under callback invocation pressure, this strategy allows
 initial bursts of size `maxTokens`, with a trickle of batched calls following
@@ -133,13 +139,13 @@ determined by `tokenRate`.
 
 ```ts
 const batcher = makeCallbackBatcher({
-  strategy: "LEAKY_BUCKET",
+  strategy: 'LEAKY_BUCKET',
   maxTokens: 3,
-  tokenRate: 1000
+  tokenRate: 1000,
 });
 ```
 
-The *Windowed Rate Limiter* strategy keeps track of when invocations were
+The _Windowed Rate Limiter_ strategy keeps track of when invocations were
 previously requested for each callback identifier hash over a window of length
 `windowSize` (in milliseconds). If invoked more than `callsPerWindow` during
 this backwards-looking window, the callback is throttled. Batch invoations
@@ -148,7 +154,7 @@ that tailing calls are captured when there are no more invocations).
 
 ```ts
 const batcher = makeCallbackBatcher({
-  strategy: "WINDOWED_RATE_LIMITER",
+  strategy: 'WINDOWED_RATE_LIMITER',
   windowSize: 1000,
   callsPerWindow: 2,
 });
@@ -161,6 +167,7 @@ the Leaky Bucket strategy.
 varying timing charactaristics of the strategies.
 
 ## Caveats
+
 The rate-limiting strategies employed by this library make use of `setInterval`
 internally. Many browser environments choose to [throttle timers on inactive or
 hidden pages](https://developer.chrome.com/blog/timer-throttling-in-chrome-88/).
@@ -177,8 +184,8 @@ function on the batcher in a `beforeunload` event. In addition to cleaning up
 `setInterval`s used internally, disposers make any tailing batched calls,
 ensuring that throttled callbacks are not "missed".
 
-
 ## Development
+
 To make change to this library, clone it, run `yarn install`, and then
 `yarn run start`. This will launch the in-browser demo, which is useful for
 verifying that changes have their intended effects.

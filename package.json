@@ -17,8 +17,8 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier . --write",
     "test": "vitest --config vite.config.lib.ts",
-    "coverage": "vitest run --config vite.config.lib.ts --coverage",
-    "coverage:badge": "yarn coverage && coverage-badge-creator"
+    "test:ci": "vitest run --config vite.config.lib.ts --coverage",
+    "coverage:badge": "yarn test:ci && coverage-badge-creator"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
